@@ -55,3 +55,23 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+# зависимости
+node_modules/
+
+# env
+.env
+.env.local
+
+# загруженные файлы
+**/uploads/*
+!**/uploads/.gitkeep
+
+# данные lab1
+**/data/tasks.json
+
+# логи / системное / IDE
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
