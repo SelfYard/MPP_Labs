@@ -9,3 +9,4 @@ var runner = new TestRunnerFacade(tests);
 Console.WriteLine("=== Lab 1: Sequential execution ===");
 await runner.RunSequentialAsync();
 Console.WriteLine("Done.");
+
