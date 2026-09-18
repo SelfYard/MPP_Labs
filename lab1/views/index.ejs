@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Список задач</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <h1>Список задач</h1>
+
+  <p>Всего задач: <b><%= total %></b></p>
+
+  <form method="GET" action="/" class="filter">
+    <label>Фильтр:</label>
+    <select name="status" onchange="this.form.submit()">
+      <option value="all"     <%= filter === 'all'     ? 'selected' : '' %>>Все</option>
+      <option value="pending" <%= filter === 'pending' ? 'selected' : '' %>>Не выполненные</option>
+      <option value="done"    <%= filter === 'done'    ? 'selected' : '' %>>Выполненные</option>
+    </select>
+    <noscript><button type="submit">Применить</button></noscript>
+  </form>
+
+  <h2>Новая задача</h2>
+  <form method="POST" action="/tasks" enctype="multipart/form-data" class="add-form">
+    <div>
+      <label>Название:</label>
+      <input type="text" name="title" required>
+    </div>
+    <div>
+      <label>Ожидаемая дата завершения:</label>
+      <input type="date" name="dueDate">
+    </div>
+    <div>
+      <label>Файлы:</label>
+      <input type="file" name="files" multiple>
+    </div>
+    <button type="submit">Добавить</button>
+  </form>
+
+  <h2>Задачи</h2>
+  <% if (tasks.length === 0) { %>
+    <p><i>Задач нет.</i></p>
+  <% } else { %>
+    <ul class="task-list">
+      <% tasks.forEach(task => { %>
+        <li class="<%= task.done ? 'done' : '' %>">
+          <div class="task-header">
+            <span class="title"><%= task.title %></span>
+            <span class="status"><%= task.done ? '✔ выполнено' : '⏳ в работе' %></span>
+          </div>
+
+          <% if (task.dueDate) { %>
+            <div class="due">Ожидаемая дата: <%= task.dueDate %></div>
+          <% } %>
+
+          <% if (task.files && task.files.length) { %>
+            <div class="files">
+              Файлы:
+              <ul>
+                <% task.files.forEach(f => { %>
+                  <li>
+                    <a href="/uploads/<%= f %>" target="_blank"><%= f %></a>
+                  </li>
+                <% }) %>
+              </ul>
+            </div>
+          <% } %>
+
+          <div class="actions">
+            <form method="POST" action="/tasks/<%= task.id %>/toggle" style="display:inline">
+              <button type="submit"><%= task.done ? 'Вернуть в работу' : 'Отметить выполненной' %></button>
+            </form>
+            <form method="POST" action="/tasks/<%= task.id %>/delete" style="display:inline">
+              <button type="submit" onclick="return confirm('Удалить задачу?')">Удалить</button>
+            </form>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</body>
+</html>

@@ -1,0 +1,14 @@
+body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+h1 { color: #222; }
+form.add-form div { margin-bottom: .5rem; }
+input, select, button { padding: .3rem .5rem; font-size: 1rem; }
+.task-list { list-style: none; padding: 0; }
+.task-list li { border: 1px solid #ddd; border-radius: 6px; padding: .75rem 1rem; margin-bottom: .75rem; }
+.task-list li.done .title { text-decoration: line-through; color: #888; }
+.task-header { display: flex; justify-content: space-between; }
+.status { color: #555; font-size: .9rem; }
+.due { color: #666; font-size: .9rem; margin-top: .25rem; }
+.files { margin-top: .5rem; font-size: .9rem; }
+.actions { margin-top: .5rem; }
+.actions button { cursor: pointer; }
+.filter { margin-bottom: 1rem; }
