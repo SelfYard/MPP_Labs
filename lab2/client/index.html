@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Books SPA</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="app-header">
+      <h1>📚 Книги</h1>
+      <p class="subtitle">SPA + REST API — лабораторная №2</p>
+    </header>
+
+    <div id="error" class="error" hidden></div>
+
+    <form id="form" class="card form">
+      <input type="hidden" id="id" />
+
+      <div class="field">
+        <label for="title">Название</label>
+        <input type="text" id="title" placeholder="Например, 1984" required />
+      </div>
+
+      <div class="field">
+        <label for="author">Автор</label>
+        <input type="text" id="author" placeholder="Джордж Оруэлл" required />
+      </div>
+
+      <div class="field field-file">
+        <label for="cover">Обложка</label>
+        <input type="file" id="cover" accept="image/*" />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" id="submitBtn" class="btn btn-primary">Добавить</button>
+        <button type="button" id="cancelBtn" class="btn btn-ghost" hidden>Отмена</button>
+      </div>
+    </form>
+
+    <ul id="list" class="list"></ul>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
