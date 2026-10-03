@@ -1,19 +1,31 @@
 services:
   server:
     build: ./server
+    image: lab2-server
     container_name: lab2_server
-    ports:
-      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
     volumes:
       - ./server/uploads:/app/uploads
       - ./server/data.db:/app/data.db
+    ports:
+      - "3001:3001"     # оставляем для отладки API напрямую
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3001/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
     restart: unless-stopped
 
   client:
     build: ./client
+    image: lab2-client
     container_name: lab2_client
     ports:
       - "8080:80"
     depends_on:
-      - server
+      server:
+        condition: service_healthy
     restart: unless-stopped

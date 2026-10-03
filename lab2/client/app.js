@@ -1,5 +1,4 @@
-const API = 'http://localhost:3001/api/books';
-const UPLOADS = 'http://localhost:3001';
+const API = '/api/books';   // относительно — nginx проксирует на backend
 
 const $error   = document.getElementById('error');
 const $form    = document.getElementById('form');
@@ -12,9 +11,10 @@ const $submit  = document.getElementById('submitBtn');
 const $cancel  = document.getElementById('cancelBtn');
 
 function showError(msg) {
-  $error.textContent = Array.isArray(msg) ? msg.join('; ') : msg;
+  $error.textContent = msg || '';
   $error.hidden = !msg;
 }
+
 function clearForm() {
   $id.value = '';
   $title.value = '';
@@ -24,15 +24,29 @@ function clearForm() {
   $cancel.hidden = true;
 }
 
+async function extractError(r) {
+  let msg = `HTTP ${r.status}`;
+  try {
+    const body = await r.json();
+    if (body && body.error) {
+      msg = body.error.message || msg;
+      const details = body.error.details;
+      if (Array.isArray(details) && details.length) {
+        msg += ': ' + details.map(d => d.message || d.field).join('; ');
+      }
+    }
+  } catch { /* не JSON — оставим базовый текст */ }
+  return msg;
+}
+
 async function load() {
   showError('');
   try {
     const r = await fetch(API);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const books = await r.json();
-    render(books);
+    if (!r.ok) return showError(await extractError(r));
+    render(await r.json());
   } catch (e) {
-    showError(`Не удалось загрузить: ${e.message}`);
+    showError(`Сеть недоступна: ${e.message}`);
   }
 }
 
@@ -48,7 +62,7 @@ function render(books) {
     li.className = 'book';
 
     const cover = b.cover
-      ? `<img src="${UPLOADS}${b.cover}" alt="">`
+      ? `<img src="${b.cover}" alt="">`
       : `<div class="cover-placeholder">📖</div>`;
 
     li.innerHTML = `
@@ -91,13 +105,13 @@ function startEdit(b) {
 async function remove(id) {
   if (!confirm('Удалить?')) return;
   showError('');
-  const r = await fetch(`${API}/${id}`, { method: 'DELETE' });
-  if (!r.ok) {
-    const body = await r.json().catch(() => ({}));
-    showError(body.error || `HTTP ${r.status}`);
-    return;
+  try {
+    const r = await fetch(`${API}/${id}`, { method: 'DELETE' });
+    if (!r.ok) return showError(await extractError(r));
+    load();
+  } catch (e) {
+    showError(`Сеть недоступна: ${e.message}`);
   }
-  load();
 }
 
 $form.addEventListener('submit', async (e) => {
@@ -113,14 +127,14 @@ $form.addEventListener('submit', async (e) => {
   const url = id ? `${API}/${id}` : API;
   const method = id ? 'PUT' : 'POST';
 
-  const r = await fetch(url, { method, body: fd });
-  if (!r.ok) {
-    const body = await r.json().catch(() => ({}));
-    showError(body.errors || body.error || `HTTP ${r.status}`);
-    return;
+  try {
+    const r = await fetch(url, { method, body: fd });
+    if (!r.ok) return showError(await extractError(r));
+    clearForm();
+    load();
+  } catch (e) {
+    showError(`Сеть недоступна: ${e.message}`);
   }
-  clearForm();
-  load();
 });
 
 $cancel.addEventListener('click', () => { clearForm(); showError(''); });
