@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><title>Сброс пароля</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<main class="app">
+  <header class="app-header"><h1>🔐 Новый пароль</h1></header>
+  <div id="error" class="error" hidden></div>
+  <div id="info"  class="info"  hidden></div>
+  <form id="form" class="card form">
+    <div class="field"><label>Новый пароль (мин. 8)</label>
+      <input id="password" type="password" minlength="8" required></div>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Сбросить пароль</button>
+      <a href="index.html" class="link">На главную</a>
+    </div>
+  </form>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const token = new URLSearchParams(location.search).get('token') || '';
+const showError = (m) => { $('error').textContent = m || ''; $('error').hidden = !m; };
+const showInfo  = (m) => { $('info').textContent  = m || ''; $('info').hidden  = !m; };
+
+if (!token) showError('Токен отсутствует в ссылке');
+
+$('form').addEventListener('submit', async (e) => {
+  e.preventDefault(); showError(''); showInfo('');
+  const r = await fetch('/api/auth/reset-password', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, password: $('password').value }),
+  });
+  if (!r.ok) {
+    try { const b = await r.json(); showError(b.error?.message || `HTTP ${r.status}`); }
+    catch { showError(`HTTP ${r.status}`); }
+    return;
+  }
+  showInfo('Пароль изменён. Все сессии завершены. Можете войти заново.');
+});
+</script>
+</body></html>

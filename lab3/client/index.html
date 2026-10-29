@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Books — ЛР3</title>
+  <link rel="stylesheet" href="style.css?v=4" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="brand-emoji">📚</span> Books</div>
+    <div class="topbar-user" id="topbarUser" style="display:none;">
+      <span class="email" id="userEmail"></span>
+      <span class="role-badge" id="userRole"></span>
+      <button class="btn btn-ghost btn-sm" id="logoutBtn" type="button">Выйти</button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <section id="authView">
+    <div class="auth-wrap">
+      <h1 class="page-title" style="text-align:center;">Добро пожаловать</h1>
+      <p class="page-subtitle" style="text-align:center;">Войдите или создайте аккаунт</p>
+
+      <div class="card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tabLogin" type="button">Вход</button>
+          <button class="auth-tab" id="tabRegister" type="button">Регистрация</button>
+        </div>
+
+        <form class="form" id="loginForm">
+          <div class="field">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" required autocomplete="email" />
+          </div>
+          <div class="field">
+            <label for="loginPassword">Пароль</label>
+            <input type="password" id="loginPassword" required autocomplete="current-password" />
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Войти</button>
+            <a href="forgot.html" class="form-link" style="margin-left:auto;">Забыли пароль?</a>
+          </div>
+        </form>
+
+        <form class="form" id="registerForm" style="display:none;">
+          <div class="field">
+            <label for="regEmail">Email</label>
+            <input type="email" id="regEmail" required autocomplete="email" />
+          </div>
+          <div class="field">
+            <label for="regPassword">Пароль</label>
+            <input type="password" id="regPassword" required minlength="8" autocomplete="new-password" />
+            <span class="field-hint">Минимум 8 символов</span>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Создать аккаунт</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="appView" style="display:none;">
+
+    <h1 class="page-title" id="pageHeading">Книги</h1>
+    <p class="page-subtitle" id="pageSubheading"></p>
+
+    <div class="permissions">
+      <h3 id="permissionsTitle">Что мне доступно</h3>
+      <ul id="permissionsList"></ul>
+    </div>
+
+    <nav class="tabs">
+      <button class="tab active" data-view="books" type="button">Книги</button>
+      <button class="tab" data-view="users" type="button" style="display:none;">Пользователи</button>
+      <button class="tab" data-view="sessions" type="button">Сессии</button>
+    </nav>
+
+    <div id="booksView">
+      <div class="books-toolbar">
+        <h2 id="booksHeading">Книги</h2>
+        <span class="hint" id="booksHint"></span>
+      </div>
+
+      <div class="card" id="bookFormCard">
+        <form class="form" id="bookForm">
+          <input type="hidden" id="bookId" />
+          <div class="grid-2">
+            <div class="field">
+              <label for="bookTitle">Название</label>
+              <input type="text" id="bookTitle" required maxlength="200" />
+            </div>
+            <div class="field">
+              <label for="bookAuthor">Автор</label>
+              <input type="text" id="bookAuthor" required maxlength="200" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="bookCover">Обложка (необязательно)</label>
+            <input type="file" id="bookCover" accept="image/*" />
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit" id="bookSubmit">Добавить</button>
+            <button class="btn btn-ghost" type="button" id="bookCancel" style="display:none;">Отмена</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="books-grid" id="booksGrid"></div>
+    </div>
+
+    <div id="usersView" style="display:none;">
+      <div class="stats-row" id="statsRow"></div>
+      <div class="users-list" id="usersList"></div>
+    </div>
+
+    <div id="sessionsView" style="display:none;">
+      <p class="muted" style="margin-bottom:16px;">Устройства и браузеры, где выполнен вход.</p>
+      <div class="sessions-list" id="sessionsList"></div>
+      <button class="btn btn-secondary" id="revokeOthersBtn" type="button">
+        Завершить все другие сессии
+      </button>
+    </div>
+
+  </section>
+
+</main>
+
+<div class="toasts" id="toasts"></div>
+<script src="app.js?v=4"></script>
+</body>
+</html>

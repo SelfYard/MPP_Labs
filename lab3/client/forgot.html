@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><title>Восстановление пароля</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<main class="app">
+  <header class="app-header"><h1>🔑 Восстановление доступа</h1></header>
+  <div id="error" class="error" hidden></div>
+  <div id="info"  class="info"  hidden></div>
+  <form id="form" class="card form">
+    <div class="field"><label>Email</label><input id="email" type="email" required></div>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Отправить ссылку</button>
+      <a href="index.html" class="link">На главную</a>
+    </div>
+  </form>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const showError = (m) => { $('error').textContent = m || ''; $('error').hidden = !m; };
+const showInfo  = (m) => { $('info').textContent  = m || ''; $('info').hidden  = !m; };
+
+$('form').addEventListener('submit', async (e) => {
+  e.preventDefault(); showError(''); showInfo('');
+  const r = await fetch('/api/auth/forgot-password', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: $('email').value.trim() }),
+  });
+  if (!r.ok) {
+    try { const b = await r.json(); showError(b.error?.message || `HTTP ${r.status}`); }
+    catch { showError(`HTTP ${r.status}`); }
+    return;
+  }
+  const data = await r.json();
+  showInfo(data.message + (data.devResetUrl ? ` (dev: ${data.devResetUrl})` : ''));
+});
+</script>
+</body></html>
