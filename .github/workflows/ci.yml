@@ -1,9 +1,16 @@
-name: CI
+name: Lab 3 CI
 
 on:
   push:
     branches: [ main, master ]
+    paths:
+      - 'lab3/**'
+      - '.github/workflows/ci.yml'
   pull_request:
+    paths:
+      - 'lab3/**'
+      - '.github/workflows/ci.yml'
+  workflow_dispatch:
 
 jobs:
   server:
@@ -11,12 +18,14 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: server
+        working-directory: lab3/server
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
+          cache: npm
+          cache-dependency-path: lab3/server/package-lock.json
       - name: Install dependencies
         run: npm install --no-audit --no-fund
       - name: Lint
@@ -28,7 +37,10 @@ jobs:
     name: Docker build
     runs-on: ubuntu-latest
     needs: server
+    defaults:
+      run:
+        working-directory: lab3
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Build images
         run: docker compose build
