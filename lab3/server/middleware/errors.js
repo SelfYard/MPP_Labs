@@ -26,7 +26,7 @@ function notFound(req, res) {
   res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Ресурс не найден' } });
 }
 
-function errorHandler(err, req, res, next) {
+function errorHandler(err, req, res, _next) {
   const status = err.status || 500;
   const code = err.code || STATUS_CODES[status] || 'INTERNAL_ERROR';
 

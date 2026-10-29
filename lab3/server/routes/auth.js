@@ -61,7 +61,7 @@ async function issueSession(user, req, res) {
   const expiresAt = Date.now() + config.jwt.refreshTtl * 1000;
   qInsertRefresh.run(jti, user.id, hash, req.ip || '', req.headers['user-agent'] || '', expiresAt);
   setRefreshCookie(res, cookie);
-  return { accessToken: signAccess(user), expiresIn: config.jwt.accessTtl, jti };
+  return { accessToken: signAccess(user), expiresIn: config.jwt.accessTtl };
 }
 
 router.post('/register', authLimiter, async (req, res, next) => {
@@ -82,7 +82,7 @@ router.post('/register', authLimiter, async (req, res, next) => {
     const hash = await bcrypt.hash(password, 10);
     const info = qInsertUser.run(email, hash, 'user');
     const user = { id: Number(info.lastInsertRowid), email, role: 'user' };
-    const { jti, ...tokens } = await issueSession(user, req, res);
+    const tokens = await issueSession(user, req, res);
     res.status(201).json({ user, ...tokens });
   } catch (e) { next(e); }
 });
@@ -116,7 +116,7 @@ router.post('/login', authLimiter, async (req, res, next) => {
     }
 
     qOk.run(user.id);
-    const { jti, ...tokens } = await issueSession(user, req, res);
+    const tokens = await issueSession(user, req, res);
     res.json({ user: { id: user.id, email: user.email, role: user.role }, ...tokens });
   } catch (e) { next(e); }
 });
@@ -138,7 +138,7 @@ router.post('/refresh', async (req, res, next) => {
     const user = qUserById.get(row.user_id);
     if (!user) throw new HttpError(401, 'Пользователь не найден');
 
-    const { jti: _newJti, ...tokens } = await issueSession(user, req, res);
+    const tokens = await issueSession(user, req, res);
     res.json({ user, ...tokens });
   } catch (e) { next(e); }
 });
